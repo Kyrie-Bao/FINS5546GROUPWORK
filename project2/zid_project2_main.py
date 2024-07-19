@@ -1,6 +1,7 @@
 """ zid_project2_main.py
  shujie
  honghui
+ Yikai Bao
 """
 # ----------------------------------------------------------------------------
 # Part 1: Read the documentation for the following methods:
