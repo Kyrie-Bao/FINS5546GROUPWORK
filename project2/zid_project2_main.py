@@ -2,6 +2,7 @@
  shujie
  honghui
  Yikai Bao
+ Miko
 """
 # ----------------------------------------------------------------------------
 # Part 1: Read the documentation for the following methods:
