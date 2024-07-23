@@ -9,7 +9,12 @@
 # Note: please keep the aliases consistent throughout the project.
 #       For details, review the import statements in zid_project2_main.py
 
-# <COMPLETE THIS PART>
+
+import pandas as pd
+import config as cfg
+import zid_project2_portfolio as pf
+import zid_project2_characteristics as cha
+import util
 
 
 
@@ -98,7 +103,7 @@ def read_prc_csv(tic, start, end, prc_col='Adj Close'):
 
     """
 
-    # <COMPLETE THIS PART>
+
 
 
 # ----------------------------------------------------------------------------
@@ -478,9 +483,8 @@ def _test_aj_ret_dict(tickers, start, end):
 
 
 if __name__ == "__main__":
-    pass
-    # #test read_prc_csv function
-    # _test_read_prc_csv()
+    #test read_prc_csv function
+    _test_read_prc_csv()
 
     # # use made-up series to test daily_return_cal function
     # _test_daily_return_cal()
