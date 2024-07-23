@@ -15,7 +15,7 @@ import config as cfg
 import zid_project2_portfolio as pf
 import zid_project2_characteristics as cha
 import util
-
+import os
 
 
 # ----------------------------------------------------------------------------
@@ -103,7 +103,30 @@ def read_prc_csv(tic, start, end, prc_col='Adj Close'):
 
     """
 
+    # Ensure the ticker is in lowercase
+    tic_lower = tic.lower()
+    file_name = f"{tic_lower}_prc.csv"
 
+    # Define the file path
+    file_loc = os.path.join(cfg.DATADIR, file_name)
+
+    # Read the CSV file
+    # Set column 'Date' as index
+    df = pd.read_csv(file_loc, index_col='Date')
+
+    # Filter the data for the date range
+    df = df.loc[start:end]
+
+    # Extract the specified column and rename it to the lowercase ticker symbol
+    ser = df[prc_col].rename(tic_lower)
+
+    # Transfer the index to DatetimeIndex
+    ser.index = pd.to_datetime(ser.index)
+
+    # Drop all null values
+    ser = ser.dropna()
+
+    return ser
 
 
 # ----------------------------------------------------------------------------
@@ -191,7 +214,23 @@ def daily_return_cal(prc):
      - Ensure that the returns do not contain any entries with null values.
 
     """
-    # <COMPLETE THIS PART>
+
+    # Create an empty list for daily returns
+    daily_returns = []
+
+    # Loop through the series using index to access the current and yesterday prices
+    for i in range(1, len(prc)):
+        current_price = prc.iloc[i]
+        yesterday_price = prc.iloc[i - 1]
+
+        # Calculate the daily return and append it to daily returns list
+        daily_return = current_price / yesterday_price - 1
+        daily_returns.append(daily_return)
+
+    # Change the list to Series
+    daily_return_series = pd.Series(daily_returns, index=prc.index[1:], name=prc.name)
+
+    return daily_return_series
 
 
 # ----------------------------------------------------------------------------
@@ -488,9 +527,9 @@ if __name__ == "__main__":
 
     # # use made-up series to test daily_return_cal function
     # _test_daily_return_cal()
-    # # use AAPL prc series to test daily_return_cal function
-    # ser_price = read_prc_csv(tic='AAPL', start='2020-09-03', end='2020-09-09')
-    # _test_daily_return_cal(made_up_data=False, ser_prc=ser_price)
+    # use AAPL prc series to test daily_return_cal function
+    ser_price = read_prc_csv(tic='AAPL', start='2020-09-03', end='2020-09-09')
+    _test_daily_return_cal(made_up_data=False, ser_prc=ser_price)
     #
     # # use made-up series to test daily_return_cal function
     # _test_monthly_return_cal()
