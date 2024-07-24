@@ -12,10 +12,8 @@
 #       For details, review the import statements in zid_project2_main.py
 
 import pandas as pd
-import config as cfg
 import zid_project2_etl as etl
 import util
-import os
 import sys
 import numpy as np
 
