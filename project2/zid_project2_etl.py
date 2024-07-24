@@ -484,8 +484,34 @@ def aj_ret_dict(tickers, start, end):
         memory usage: 24.0 bytes
         ----------------------------------------
     """
-    # <COMPLETE THIS PART>
+    # Create two empty dictionary for daily returns and monthly returns
+    daily_returns = {}
+    monthly_returns = {}
 
+    # Loop the ticker list to find all tickers
+    for tic in tickers:
+        # Read the data
+        prc = read_prc_csv(tic, start, end)
+        # Calculate daily returns and add the series to the dictionary
+        daily_returns[tic.lower()] = daily_return_cal(prc)
+        # Calculate monthly returns and add the series to the dictionary
+        monthly_returns[tic.lower()] = monthly_return_cal(prc)
+
+    # Now we have two dictionary of daily returns and monthly returns
+    # Then change these two dictionaries to dataframe
+    daily_return_df = pd.DataFrame(daily_returns)
+    daily_return_df.index.name = 'Date'
+
+    monthly_return_df = pd.DataFrame(monthly_returns)
+    monthly_return_df.index.name = 'Year_Month'
+
+    # Combine them to the final dictionary
+    ret_dict = {
+        'Daily': daily_return_df,
+        'Monthly': monthly_return_df
+    }
+
+    return ret_dict
 
 # ----------------------------------------------------------------------------
 #   Test functions
@@ -571,9 +597,9 @@ if __name__ == "__main__":
 
     # # use made-up series to test daily_return_cal function
     # _test_monthly_return_cal()
-    # use AAPL prc series to test daily_return_cal function
-    ser_price = read_prc_csv(tic='AAPL', start='2020-08-31', end='2021-01-10')
-    _test_monthly_return_cal(made_up_data=False, ser_prc=ser_price)
-    # # test aj_ret_dict function
-    # _test_aj_ret_dict(['AAPL', 'TSLA'], start='2010-06-25', end='2010-08-05')
+    # # use AAPL prc series to test daily_return_cal function
+    # ser_price = read_prc_csv(tic='AAPL', start='2020-08-31', end='2021-01-10')
+    # _test_monthly_return_cal(made_up_data=False, ser_prc=ser_price)
+    # test aj_ret_dict function
+    _test_aj_ret_dict(['AAPL', 'TSLA'], start='2010-06-25', end='2010-08-05')
 
