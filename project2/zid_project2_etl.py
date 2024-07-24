@@ -112,7 +112,18 @@ def read_prc_csv(tic, start, end, prc_col='Adj Close'):
 
     # Read the CSV file
     # Set column 'Date' as index
-    df = pd.read_csv(file_loc, index_col='Date')
+    df = pd.read_csv(file_loc, index_col='Date', parse_dates=True)
+
+    # Ensure the index is monotonically increasing
+    df = df.sort_index()
+
+    # Adjust the start date if it is earlier than the first date in the dataset
+    if pd.to_datetime(start) < df.index[0]:
+        start = df.index[0].strftime('%Y-%m-%d')
+
+    # Adjust the end date if it is later than the last date in the dataset
+    if pd.to_datetime(end) > df.index[-1]:
+        end = df.index[-1].strftime('%Y-%m-%d')
 
     # Filter the data for the date range
     df = df.loc[start:end]
@@ -333,8 +344,35 @@ def monthly_return_cal(prc):
      - Ensure that the returns do not contain any entries with null values.
 
     """
-    # <COMPLETE THIS PART>
+    # Resample the data to the end day of month
+    monthly_prc = prc.resample('ME').last()
 
+    # Count the number of entries per month
+    entries_per_month = prc.resample('ME').size()
+
+    # Create an empty list for monthly returns
+    monthly_returns = []
+
+    # Loop through the series using index to access the current month and last month prices
+    for i in range(1, len(monthly_prc)):
+        current_month_price = monthly_prc.iloc[i]
+        last_month_price = monthly_prc.iloc[i - 1]
+
+        # Calculate the Monthly return and append it to monthly returns list
+        monthly_return = current_month_price / last_month_price - 1
+        monthly_returns.append(monthly_return)
+
+    # Change the list to Series
+    monthly_return_series = pd.Series(monthly_returns, index=monthly_prc.index[1:], name=prc.name)
+
+    # Filter out the month with less than 18 entries
+    monthly_return_series = monthly_return_series[entries_per_month >= 18]
+
+    # Convert the index with year-month frequency
+    monthly_return_series.index = monthly_return_series.index.to_period('M')
+    monthly_return_series.index.name = 'Year_Month'
+
+    return monthly_return_series
 
 # ----------------------------------------------------------------------------
 # Part 4.5: Complete the aj_ret_dict function
@@ -522,20 +560,20 @@ def _test_aj_ret_dict(tickers, start, end):
 
 
 if __name__ == "__main__":
-    #test read_prc_csv function
-    _test_read_prc_csv()
+    # #test read_prc_csv function
+    # _test_read_prc_csv()
 
     # # use made-up series to test daily_return_cal function
     # _test_daily_return_cal()
-    # use AAPL prc series to test daily_return_cal function
-    ser_price = read_prc_csv(tic='AAPL', start='2020-09-03', end='2020-09-09')
-    _test_daily_return_cal(made_up_data=False, ser_prc=ser_price)
-    #
+    # # use AAPL prc series to test daily_return_cal function
+    # ser_price = read_prc_csv(tic='AAPL', start='2020-09-03', end='2020-09-09')
+    # _test_daily_return_cal(made_up_data=False, ser_prc=ser_price)
+
     # # use made-up series to test daily_return_cal function
     # _test_monthly_return_cal()
-    # # use AAPL prc series to test daily_return_cal function
-    # ser_price = read_prc_csv(tic='AAPL', start='2020-08-31', end='2021-01-10')
-    # _test_monthly_return_cal(made_up_data=False, ser_prc=ser_price)
+    # use AAPL prc series to test daily_return_cal function
+    ser_price = read_prc_csv(tic='AAPL', start='2020-08-31', end='2021-01-10')
+    _test_monthly_return_cal(made_up_data=False, ser_prc=ser_price)
     # # test aj_ret_dict function
     # _test_aj_ret_dict(['AAPL', 'TSLA'], start='2010-06-25', end='2010-08-05')
 
