@@ -175,7 +175,7 @@ def vol_cal(ret, cha_name, ret_freq_use: list):
         for month in monthly_ret:
             # Calculate standard deviation if there's over or equal 18 entries
             if len(month[1]) >= 18:
-                vol = np.std(month[1])
+                vol = month[1].std()
             else:
                 # If less than 18 entries, then set the vol to None
                 vol = None
@@ -274,8 +274,19 @@ def merge_tables(ret, df_cha, cha_name):
        ensuring that modifications to the copied DataFrame do not affect the original DataFrame stored in the dictionary
      - Read shift() documentations to understand how to shift the values of a DataFrame along a specified axis
     """
-    # <COMPLETE THIS PART>
+    # Extract monthly return dataframe from the input dictionary
+    monthly_ret_df = ret['Monthly'].copy()
 
+    # Shift the characteristics DataFrame 1 month forward
+    df_cha_shifted = df_cha.shift(1)
+
+    # Merge the tables
+    merged_df = monthly_ret_df.merge(df_cha_shifted, left_index=True, right_index=True, how='left')
+
+    # Set the index name to 'Year_Month'
+    merged_df.index.name = 'Year_Month'
+
+    return merged_df
 
 # ------------------------------------------------------------------------------------
 # Part 5.2: Read the cha_main function and understand the workflow in this script
@@ -324,8 +335,17 @@ def cha_main(ret, cha_name, ret_freq_use: list):
         The function assumes that `vol_input_sanity_check`, `vol_cal`, and `merge_tables` are defined elsewhere
         in the module with appropriate logic to handle the inputs and outputs as described.
     """
-    # <COMPLETE THIS PART>
+    # 1. Call `vol_input_sanity_check` function to check the sanity of inputs to ensure
+    #    they meet required formats and constraints.
+    vol_input_sanity_check(ret, cha_name, ret_freq_use)
 
+    # 2. Call `vol_cal` function to calculate the stock characteristics.
+    df_cha = vol_cal(ret, cha_name, ret_freq_use)
+
+    # 3. Call `merge_tables` function to merge step 2 output and monthly return table together
+    merged_tb = merge_tables(ret, df_cha, cha_name)
+
+    return merged_tb
 
 def _test_ret_dict_gen():
     """ Function for generating made-up dictionary output from etl.py.
@@ -470,5 +490,5 @@ if __name__ == "__main__":
     ret_dict = etl._test_aj_ret_dict(tickers=['AAPL', 'TSLA'], start='2010-05-15', end='2010-08-31')
     _test_vol_input_sanity_check(ret_dict, 'vol', ['Daily',])
     _test_vol_cal(ret_dict, 'vol', ['Daily',])
-    # _test_merge_tables(ret_dict, 'vol', ['Daily',])
-    # _test_cha_main(ret_dict, 'vol', ['Daily',])
+    _test_merge_tables(ret_dict, 'vol', ['Daily',])
+    _test_cha_main(ret_dict, 'vol', ['Daily',])
