@@ -12,8 +12,6 @@
 
 import pandas as pd
 import config as cfg
-import zid_project2_portfolio as pf
-import zid_project2_characteristics as cha
 import util
 import os
 
