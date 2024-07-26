@@ -352,12 +352,37 @@ Q10_ANSWER = '1.5980'
 # Please replace the '?' of ls_bar, ls_t and n_obs variables below
 # with the respective values of the 'ls' column in EW_LS_pf_df from Part 8,
 # keep 4 decimal places if it is not an integer:
-ls_bar = '?'
-ls_t = '?'
-n_obs = '?'
+ls_bar = '0.0073'
+ls_t = '1.3857'
+n_obs = '235'
 
 
-# <ADD THE t_stat FUNCTION HERE>
+def t_stat(df):
+    """
+    Calculate the mean, t-stat, and number of observations for the 'ls' column.
+
+    Parameters:
+    df (pd.DataFrame): DataFrame containing the 'ls' column.
+
+    Returns:
+    pd.DataFrame: DataFrame with one row containing 'ls_bar', 'ls_t', and 'n_obs'.
+    """
+    ls_bar = df['ls'].mean().round(4)
+    n_obs = df['ls'].count()
+    ls_std_error = df['ls'].std() / (n_obs ** 0.5)
+    ls_t = (ls_bar / ls_std_error).round(4)
+
+    result_df = pd.DataFrame({
+        'ls': {
+            'ls_bar': ls_bar,
+            'ls_t': ls_t,
+            'n_obs': int(n_obs)
+        }
+    }).T
+
+    return result_df
+
+
 
 
 # ----------------------------------------------------------------------------
