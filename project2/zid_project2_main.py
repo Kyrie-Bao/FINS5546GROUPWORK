@@ -173,7 +173,15 @@ def get_avg(df: pd.DataFrame, year):
         dtype: float64
 
     """
-    # <COMPLETE THIS PART>
+    # Filter data for the given year
+    df_year = df[df.index.year == year]
+
+    # Make sure that missing values will not be included
+    df_year = df_year.dropna()
+
+    # Calculate and return the mean
+    avg_return = df_year.mean()
+    return avg_return
 
 
 def get_cumulative_ret(df):
@@ -203,7 +211,16 @@ def get_cumulative_ret(df):
         where r1, ..., rN represents monthly returns
 
     """
-    # <COMPLETE THIS PART>
+    # Step 1: Add 1 to each return value in the DataFrame
+    df_plus_one = 1 + df
+
+    # Step 2: Calculate the product of all values in each column
+    prod_returns = df_plus_one.prod()
+
+    # Step 3: Subtract 1 from the product to get the cumulative return
+    cumulative_return = prod_returns - 1
+
+    return cumulative_return
 
 
 # ----------------------------------------------------------------------------
@@ -444,10 +461,8 @@ def _test_get_cumulative_ret():
 
 
 if __name__ == "__main__":
+    _test_get_avg()
+    _test_get_cumulative_ret()
     pass
-
-
-
-
 
 
