@@ -315,7 +315,7 @@ Q7_ANSWER = '5'
 #     The answer string should only include two integers separating by a comma.
 #     The first number represents number of rows.
 #     Don't include any other signs or letters.
-Q8_ANSWER = '235,5'
+Q8_ANSWER = '235,4'
 
 
 # Q9: What is the average equal weighted portfolio return of the quantile with the
