@@ -4,6 +4,8 @@
  Yikai Bao
  Miko
 """
+import pickle
+
 # ----------------------------------------------------------------------------
 # Part 1: Read the documentation for the following methods:
 #   – pandas.DataFrame.mean
@@ -219,10 +221,10 @@ def get_cumulative_ret(df):
     # Step 3: Subtract 1 from the product to get the cumulative return
     cumulative_return = prod_returns - 1
 
-    # Step 4: Ensure the result is a Series
-    cumulative_return_series = pd.Series(cumulative_return, index=df.columns)
+    # # Step 4: Ensure the result is a Series
+    # cumulative_return_series = pd.Series(cumulative_return, index=df.columns)
 
-    return cumulative_return_series
+    return cumulative_return
 
 
 # ----------------------------------------------------------------------------
@@ -488,8 +490,29 @@ def _test_get_cumulative_ret():
 
 
 if __name__ == "__main__":
-    _test_get_avg()
-    _test_get_cumulative_ret()
-    pass
+    # _test_get_avg()
+    # _test_get_cumulative_ret()
+
+    # Define the parameter
+    tics = cfg.TICMAP.keys()
+    start = '2000-12-29'
+    end = '2021-08-31'
+    cha_name = 'vol'
+    ret_freq_use = ['Daily']
+    q = 3
+
+    # Use the function to generate dictionaries and dataframes
+    ret_dic, cha_df, portfolio_df = portfolio_main(tics, start, end, cha_name, ret_freq_use, q)
+
+    # Save ret_dic to pickle
+    with open('DM_Ret_dict.pickle', 'wb') as file:
+        pickle.dump(ret_dic, file)
+
+    # Save cha_df to csv
+    cha_df.to_csv('Vol_Ret_mrg_df.csv')
+
+    # Save portfolio_df to csv
+    portfolio_df.to_csv('EW_LS_pf_df.csv')
+
 
 
