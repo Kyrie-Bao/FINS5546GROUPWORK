@@ -219,7 +219,10 @@ def get_cumulative_ret(df):
     # Step 3: Subtract 1 from the product to get the cumulative return
     cumulative_return = prod_returns - 1
 
-    return cumulative_return
+    # Step 4: Ensure the result is a Series
+    cumulative_return_series = pd.Series(cumulative_return, index=df.columns)
+
+    return cumulative_return_series
 
 
 # ----------------------------------------------------------------------------
