@@ -249,7 +249,7 @@ def get_cumulative_ret(df):
 #   Q0_answer = '?'
 #
 #   You should replace the '?' with the correct answer:
-#   Q0_answer = 'CSCO'
+Q0_answer = 'CSCO'
 #
 #
 #     To answer the questions below, you need to run portfolio_main function in this script
